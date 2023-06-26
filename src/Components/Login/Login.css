@@ -58,3 +58,8 @@
   background-color: black;
   color: white;
 }
+
+.login-wrapper form a{
+  text-decoration: none;
+  color: black;
+}

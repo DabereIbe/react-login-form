@@ -8,14 +8,13 @@ import { initializeApp } from "firebase/app";
 //import { getAnalytics } from "firebase/analytics";
 import {
   getAuth,
-  signInWithEmailAndPassword,
-  // connectAuthEmulator
+  createUserWithEmailAndPassword,
+  //connectAuthEmulator
 } from "firebase/auth";
 
 import { redirect } from "react-router-dom";
 
-import './Login.css';
-
+import './Login/Login.css';
 
 const firebaseConfig = {
   apiKey: "AIzaSyAyIXubytp5b6OE24LE1YdZPa6JkyGqZ0c",
@@ -36,29 +35,38 @@ const auth = getAuth(app)
 
 
 
-const Login = () => {
+const Register = () => {
 
   const [username, setUserName] = useState('');
 
   const [password, setPassword] = useState('');
 
-  const loginUser = async (e) =>{
+  const [errorMsg, setErrorMsg] = useState('');
+
+  const [ passwordConfirmed, setPasswordConfirmed ] = useState('');
+
+  const registerUser = async (e) =>{
     // const Email = username;
     // const Password = password;
     e.preventDefault();
-    const userCredential = await signInWithEmailAndPassword(auth, username, password);
-    console.log(userCredential.user);
-    if(userCredential != null){
-      redirect('/dashboard');
+    if (password !== passwordConfirmed) {
+        setErrorMsg('Password does not match');
+    }else{
+        const userCredential = await createUserWithEmailAndPassword(auth, username, password);
+        console.log(userCredential.user);
+        
+        redirect('/dashboard');
+    
     }
+    
   }
 
     return(
       <div className="background-image">
         <div className="outer"></div>
         <div className="login-wrapper">
-          <form onSubmit={loginUser}>
-          <h1 className="form-header">Login</h1>
+          <form onSubmit={registerUser}>
+          <h1 className="form-header">Register</h1>
             <div className="form-group">
               <label>Email</label>
               <input type="text" value={username} onChange={(e) => setUserName(e.target.value)} className="form-control" placeholder="Enter Email..." />
@@ -68,13 +76,17 @@ const Login = () => {
               <label>Password</label>
               <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="form-control" placeholder="Enter Password..."/>
             </div>
+            <div className="form-group">
+              <label>Confirm Password</label>
+              <input type="password" value={passwordConfirmed} onChange={(e) => setPasswordConfirmed(e.target.value)} className="form-control" placeholder="Confirm Password..."/>
+              <p>{`${errorMsg}`}</p>
+            </div>
 
             <div>
               <button type="submit" className="btn-submit">Submit</button>
             </div>
-            <a href="/register">Create Account</a>
+    
           </form>
-          
         </div>
       </div>
   
@@ -82,6 +94,6 @@ const Login = () => {
   
     )
   
-  }
-  
-export default Login
+  } 
+
+export default Register
